@@ -1,9 +1,20 @@
 import logging
+import platform
 import socket
+import argparse
 import qrcode
 from socketio import Server, WSGIApp
 from eventlet import wsgi, listen
-from nix import Device
+if platform.system() == "Linux":
+	try:
+		from lib.nix import Device
+	except ImportError:
+		from src.lib.nix import Device
+else:
+	try:
+		from lib.win import Device
+	except ImportError:
+		from src.lib.win import Device
 
 
 # logging.basicConfig(level=logging.DEBUG)
@@ -11,17 +22,19 @@ logger = logging.getLogger(__name__)
 
 
 DEVICES = {}
+DEFAULT_PORT = 8013
 
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-try:
-	sock.connect(('1.255.255.255', 1))
-	IP = sock.getsockname()[0]
-except IndexError:
-	IP = '127.0.0.1'
-finally:
-	sock.close()
-PORT = 8013
+def default_host():
+	sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	try:
+		sock.connect(('1.255.255.255', 1))
+		IP = sock.getsockname()[0]
+	except IndexError:
+		IP = '127.0.0.1'
+	finally:
+		sock.close()
+	return IP
 
 
 sio = Server()
@@ -42,7 +55,7 @@ def input(sid, data):
 def disconnect(sid):
 	device = DEVICES.pop(sid)
 	logger.error(f'Deleting device {device.ip}')
-	device._ui.close()
+	device.close()
 
 
 if __name__ == '__main__':
