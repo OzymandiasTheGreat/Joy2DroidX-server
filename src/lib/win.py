@@ -1,5 +1,9 @@
+import logging
 from functools import reduce
 from . import ViGEmClient as vigem
+
+
+logger = logging.getLogger('J2DX.Windows')
 
 
 BUTTONS = {
@@ -41,8 +45,9 @@ AXES_HORIZONTAL = {
 
 class Device(object):
 
-	def __init__(self, device_ip):
-		self.ip = device_ip
+	def __init__(self, device, addr):
+		self.device = device
+		self.address = addr
 		self._client = vigem.alloc()
 		self._target = vigem.target_x360_alloc()
 		self._button = set()
@@ -58,18 +63,28 @@ class Device(object):
 
 		error = vigem.VIGEM_ERRORS(vigem.connect(self._client))
 		if error != vigem.VIGEM_ERRORS.VIGEM_ERROR_NONE:
+			logger.critical(
+				f'Device {self.device} at {self.address}::\
+					Connection to ViGEm driver failed::{error.name}')
 			raise Exception(error.name)
 		error = vigem.VIGEM_ERRORS(vigem.target_add(self._client, self._target))
 		if error != vigem.VIGEM_ERRORS.VIGEM_ERROR_NONE:
+			logger.critical(
+				f'Device {self.device} at {self.address}::\
+					Adding target failed::{error.name}')
 			raise Exception(error.name)
 
 	def close(self):
 		error = vigem.VIGEM_ERRORS(vigem.target_remove(self._client, self._target))
 		if error != vigem.VIGEM_ERRORS.VIGEM_ERROR_NONE:
+			logger.critical(
+				f'Device {self.device} at {self.address}::\
+					Removing target failed::{error.name}')
 			raise Exception(error.name)
 		vigem.target_free(self._target)
 		vigem.disconnect(self._client)
 		vigem.free(self._client)
+		logger.debug(f'Destroyed virtual device for {self.device} at {self.address}')
 
 	def send(self, key, value):
 		if key in BUTTONS:
@@ -77,18 +92,27 @@ class Device(object):
 				self._button.add(BUTTONS[key])
 			else:
 				self._button.remove(BUTTONS[key])
-		self._report.wButtons = reduce(lambda a, b: a | b, self._button, 0)
+		wButtons = reduce(lambda a, b: a | b, self._button, 0)
+		self._report.wButtons = wButtons
+		logger.debug(f'wButtons::Mask {wButtons}::{[b.name for b in self._button]}')
 		if key in TRIGGERS:
 			if value:
 				setattr(self._report, TRIGGERS[key], vigem.XUSB_TRIGGER_MAX)
+				logger.debug(f'{TRIGGERS[key]}::{vigem.XUSB_TRIGGER_MAX}')
 			else:
 				setattr(self._report, TRIGGERS[key], 0)
+				logger.debug(f'{TRIGGERS[key]}::0')
 		if key in AXES_HORIZONTAL:
-			setattr(
-				self._report, AXES_HORIZONTAL[key],
-				round(value * vigem.XUSB_THUMB_MAX))
+			axis = round(value * vigem.XUSB_THUMB_MAX)
+			setattr(self._report, AXES_HORIZONTAL[key], axis)
+			logger.debug(f'{AXES_HORIZONTAL[key]}::{axis}')
 		elif key in AXES_VERTICAL:
-			setattr(
-				self._report, AXES_VERTICAL[key],
-				-round(value * vigem.XUSB_THUMB_MAX))
-		vigem.target_x360_update(self._client, self._target, self._report)
+			axis = -round(value * vigem.XUSB_THUMB_MAX)
+			setattr(self._report, AXES_VERTICAL[key], axis)
+			logger.debug(f'{AXES_VERTICAL[key]}::{axis}')
+		error = vigem.VIGEM_ERRORS(
+			vigem.target_x360_update(self._client, self._target, self._report))
+		if error != vigem.VIGEM_ERRORS.VIGEM_ERROR_NONE:
+			logger.error(
+				f'Device {self.device} at {self.address}::\
+					Updating device state failed::{error.name}')
