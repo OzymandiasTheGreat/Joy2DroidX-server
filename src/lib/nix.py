@@ -2,7 +2,7 @@ import logging
 from evdev import UInput, AbsInfo, ecodes as e
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('J2DX.Linux')
 
 
 CAPABILITIES = {
@@ -65,18 +65,23 @@ AXES = {
 
 class Device(object):
 
-	def __init__(self, device_ip):
-		self.ip = device_ip
+	def __init__(self, device, addr):
+		self.device = device
+		self.address = addr
 		self._ui = UInput(
 			CAPABILITIES, name='Joy2DroidX-Virtual-Gamepad', version=0x1)
 
+	def close(self):
+		self._ui.close()
+		logger.debug(f'Destroyed virtual device for {self.device} at {self.address}')
+
 	def send(self, key, value):
 		if key in BUTTONS:
-			logger.debug(f'Sending button event {key}: {value}')
+			logger.debug(f'Sending button event::{e.keys[BUTTONS[key]]}: {value}')
 			self._ui.write(e.EV_KEY, BUTTONS[key], value)
 			self._ui.syn()
 		elif key in AXES:
 			coord = round(127 * value) + 127
-			logger.debug(f'Sending axis event {key}: {coord}')
+			logger.debug(f'Sending axis event::{e.ABS[AXES[key]]}: {coord}')
 			self._ui.write(e.EV_ABS, AXES[key], coord)
 			self._ui.syn()
