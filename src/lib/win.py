@@ -186,6 +186,7 @@ class DS4Device(Device):
 		self._create_device()
 
 	def send(self, key, value):
+		self._report.wButtons = 0
 		if key in self.buttons:
 			if value:
 				self._wButtons.add(self.buttons[key])
@@ -223,10 +224,10 @@ class DS4Device(Device):
 			axis = round(value * 127) + 127
 			setattr(self._report, self.axes_horizontal[key], axis)
 			logger.debug(f'{self.axes_horizontal[key]}::{axis}')
-		wButtons = reduce(lambda a, b: a | b, self._wButtons, 0)
-		self._report.wButtons = wButtons
+		self._report.wButtons |= reduce(lambda a, b: a | b, self._wButtons, 0)
 		logger.debug(
-			f'wButtons::Mask {wButtons}::{[b.name for b in self._wButtons]}')
+			f'wButtons::Mask {self._report.wButtons}::\
+				{[b.name for b in self._wButtons]}')
 		error = vigem.VIGEM_ERRORS(
 			vigem.target_ds4_update(self._client, self._target, self._report)
 		)
