@@ -38,6 +38,38 @@ class XUSB_BUTTON(IntFlag):
 	XUSB_GAMEPAD_Y              = 0x8000
 
 
+class DS4_BUTTONS(IntFlag):
+	DS4_BUTTON_THUMB_RIGHT      = 1 << 15
+	DS4_BUTTON_THUMB_LEFT       = 1 << 14
+	DS4_BUTTON_OPTIONS          = 1 << 13
+	DS4_BUTTON_SHARE            = 1 << 12
+	DS4_BUTTON_TRIGGER_RIGHT    = 1 << 11
+	DS4_BUTTON_TRIGGER_LEFT     = 1 << 10
+	DS4_BUTTON_SHOULDER_RIGHT   = 1 << 9
+	DS4_BUTTON_SHOULDER_LEFT    = 1 << 8
+	DS4_BUTTON_TRIANGLE         = 1 << 7
+	DS4_BUTTON_CIRCLE           = 1 << 6
+	DS4_BUTTON_CROSS            = 1 << 5
+	DS4_BUTTON_SQUARE           = 1 << 4
+
+
+class DS4_SPECIAL_BUTTONS(IntFlag):
+	DS4_SPECIAL_BUTTON_PS       = 1 << 0
+	DS4_SPECIAL_BUTTON_TOUCHPAD = 1 << 1
+
+
+class DS4_DPAD_DIRECTIONS(IntEnum):
+	DS4_BUTTON_DPAD_NONE        = 0x8
+	DS4_BUTTON_DPAD_NORTHWEST   = 0x7
+	DS4_BUTTON_DPAD_WEST        = 0x6
+	DS4_BUTTON_DPAD_SOUTHWEST   = 0x5
+	DS4_BUTTON_DPAD_SOUTH       = 0x4
+	DS4_BUTTON_DPAD_SOUTHEAST   = 0x3
+	DS4_BUTTON_DPAD_EAST        = 0x2
+	DS4_BUTTON_DPAD_NORTHEAST   = 0x1
+	DS4_BUTTON_DPAD_NORTH       = 0x0
+
+
 class XUSB_REPORT(Structure):
 	_fields_ = (
 		('wButtons', c_ushort),
@@ -48,6 +80,32 @@ class XUSB_REPORT(Structure):
 		('sThumbRX', c_short),
 		('sThumbRY', c_short),
 	)
+
+
+class DS4_REPORT(Structure):
+	_fields_ = (
+		('bThumbLX', c_byte),
+		('bThumbLY', c_byte),
+		('bThumbRX', c_byte),
+		('bThumbRY', c_byte),
+		('wButtons', c_ushort),
+		('bSpecial', c_byte),
+		('bTriggerL', c_byte),
+		('bTriggerR', c_byte),
+	)
+
+
+def DS4_SET_DPAD(report, direction):
+	report.wButtons &= ~0xF
+	report.wButtons |= direction
+
+
+def DS4_REPORT_INIT(report):
+	report.bThumbLX = 0x80
+	report.bThumbLY = 0x80
+	report.bThumbRX = 0x80
+	report.bThumbRY = 0x80
+	DS4_SET_DPAD(report, DS4_DPAD_DIRECTIONS.DS4_BUTTON_DPAD_NONE)
 
 
 class VIGEM_ERRORS(IntEnum):
@@ -96,6 +154,11 @@ target_x360_alloc.argtypes = ()
 target_x360_alloc.restype = c_void_p
 
 
+target_ds4_alloc = CLIENT.vigem_target_ds4_alloc
+target_ds4_alloc.argtypes = ()
+target_ds4_alloc.restype = c_void_p
+
+
 target_free = CLIENT.vigem_target_free
 target_free.argtypes = (c_void_p,)
 target_free.restype = None
@@ -114,3 +177,8 @@ target_remove.restype = c_uint
 target_x360_update = CLIENT.vigem_target_x360_update
 target_x360_update.argtypes = (c_void_p, c_void_p, XUSB_REPORT)
 target_x360_update.restype = c_uint
+
+
+target_ds4_update = CLIENT.vigem_target_ds4_update
+target_ds4_update.argtypes = (c_void_p, c_void_p, DS4_REPORT)
+target_ds4_update.restype = c_uint

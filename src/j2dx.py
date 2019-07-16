@@ -8,14 +8,14 @@ from socketio import Server, WSGIApp
 from eventlet import wsgi, listen
 if platform.system() == "Linux":
 	try:
-		from lib.nix import Device
+		from lib.nix import X360Device, DS4Device
 	except ImportError:
-		from src.lib.nix import Device
+		from src.lib.nix import X360Device, DS4Device
 else:
 	try:
-		from lib.win import Device
+		from lib.win import X360Device, DS4Device
 	except ImportError:
-		from src.lib.win import Device
+		from src.lib.win import X360Device, DS4Device
 
 
 parser = ArgumentParser(prog='Joy2DroidX-Server')
@@ -79,8 +79,13 @@ def connect(sid, environ):
 
 @sio.event
 def intro(sid, data):
-	DEVICES[sid] = Device(data['device'], CLIENTS[sid])
-	logger.info(f'Created virtual gamepad for {data["device"]} at {CLIENTS[sid]}')
+	if data['id'] == 'x360':
+		DEVICES[sid] = X360Device(data['device'], CLIENTS[sid])
+	else:
+		DEVICES[sid] = DS4Device(data['device'], CLIENTS[sid])
+	logger.info(
+		f'Created virtual {data["type"]} gamepad for {data["device"]} \
+			at {CLIENTS[sid]}')
 
 
 @sio.event
