@@ -1,0 +1,5 @@
+evdev==1.2.0; platform_system == 'Linux'
+eventlet==0.25.0
+PyInstaller==3.5
+python-socketio==4.2.0
+qrcode==6.1

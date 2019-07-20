@@ -1,4 +1,5 @@
 import sys
+import os
 import logging
 import platform
 import socket
@@ -6,19 +7,34 @@ from argparse import ArgumentParser
 import qrcode
 from socketio import Server, WSGIApp
 from eventlet import wsgi, listen
-if platform.system() == "Linux":
+if platform.system() == 'Linux':
 	try:
-		from lib.nix import X360Device, DS4Device
+		from lib.nix.device import X360Device, DS4Device
+		from lib.nix.setup import setup
 	except ImportError:
-		from src.lib.nix import X360Device, DS4Device
+		from src.lib.nix.device import X360Device, DS4Device
+		from src.lib.nix.setup import setup
 else:
 	try:
-		from lib.win import X360Device, DS4Device
+		from lib.win.device import X360Device, DS4Device
 	except ImportError:
-		from src.lib.win import X360Device, DS4Device
+		from src.lib.win.device import X360Device, DS4Device
 
 
 parser = ArgumentParser(prog='Joy2DroidX-Server')
+if platform.system() == 'Linux':
+	parser.add_argument(
+		'user',
+		nargs='?',
+		default=os.getenv('SUDO_USER'),
+		help='Only used with --setup. User to configure for UInput access.'
+	)
+parser.add_argument(
+	'-s', '--setup',
+	action='store_true',
+	help='Setup system for virtual device creation. \
+Must have root/administrator access.',
+)
 parser.add_argument(
 	'-H', '--host',
 	default=None,
@@ -85,7 +101,7 @@ def intro(sid, data):
 		DEVICES[sid] = DS4Device(data['device'], CLIENTS[sid])
 	logger.info(
 		f'Created virtual {data["type"]} gamepad for {data["device"]} \
-			at {CLIENTS[sid]}')
+at {CLIENTS[sid]}')
 
 
 @sio.event
@@ -102,14 +118,17 @@ def disconnect(sid):
 
 
 if __name__ == '__main__':
-	try:
-		host = args.host or default_host()
-		sock = listen((host, args.port))
-	except PermissionError:
-		sys.exit(f'Port {args.port} is not available. \
-			Please specify a different port with -p option.')
-	logger.info(f'Listening on http://{host}:{args.port}/')
-	qr = qrcode.QRCode()
-	qr.add_data(f'j2dx://{host}:{args.port}/')
-	qr.print_ascii(tty=True)
-	wsgi.server(sock, app, log=wsgiLogger, log_output=args.debug, debug=False)
+	if args.setup:
+		setup(args.user)
+	else:
+		try:
+			host = args.host or default_host()
+			sock = listen((host, args.port))
+		except PermissionError:
+			sys.exit(f'Port {args.port} is not available. \
+Please specify a different port with -p option.')
+		logger.info(f'Listening on http://{host}:{args.port}/')
+		qr = qrcode.QRCode()
+		qr.add_data(f'j2dx://{host}:{args.port}/')
+		qr.print_ascii(tty=True)
+		wsgi.server(sock, app, log=wsgiLogger, log_output=args.debug, debug=False)
