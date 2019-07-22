@@ -22,6 +22,10 @@ linux_data = [
 	(f'assets/tk.ozymandias.{APP}.svg', 'usr/share/icons/hicolor'),
 	(f'assets/tk.ozymandias.{APP}.appdata.xml', 'usr/share/metainfo'),
 ]
+windows_binaries = [
+	('lib/x64/ViGEmClient.dll', 'lib/x64/'),
+	('lib/x86/ViGEmClient.dll', 'lib/x86/'),
+]
 
 
 if platform.system() == 'Linux':
@@ -91,7 +95,7 @@ else:
 		['src/j2dx.py'],
 		# pathex=['/home/ozymandias/Projects/Joy2DroidX-server'],
 		pathex=[Path.cwd()],
-		binaries=[],
+		binaries=windows_binaries,
 		datas=[],
 		hiddenimports=hidden_imports,
 		hookspath=[],
@@ -122,4 +126,6 @@ else:
 		upx_exclude=[],
 		runtime_tmpdir=None,
 		console=True,
+		icon='assets/j2dx.ico',
+		version='assets/version.rc',
 	)

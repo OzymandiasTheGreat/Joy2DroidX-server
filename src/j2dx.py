@@ -17,8 +17,10 @@ if platform.system() == 'Linux':
 else:
 	try:
 		from lib.win.device import X360Device, DS4Device
+		from lib.win.setup import setup
 	except ImportError:
 		from src.lib.win.device import X360Device, DS4Device
+		from src.lib.win.setup import setup
 
 
 parser = ArgumentParser(prog='Joy2DroidX-Server')
@@ -119,7 +121,10 @@ def disconnect(sid):
 
 if __name__ == '__main__':
 	if args.setup:
-		setup(args.user)
+		if platform.system() == 'Linux':
+			setup(args.user)
+		else:
+			setup()
 	else:
 		try:
 			host = args.host or default_host()
