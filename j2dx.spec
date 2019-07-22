@@ -71,19 +71,19 @@ if platform.system() == 'Linux':
 		launcher = Path(f'{DISTPATH}/{APP}/tk.ozymandias.{APP}.desktop')
 		if launcher.exists():
 			launcher.unlink()
-		launcher.symlink_to(f'{DISTPATH}/{APP}/usr/share/applications/tk.ozymandias.{APP}.desktop')
+		launcher.symlink_to(f'usr/share/applications/tk.ozymandias.{APP}.desktop')
 		icon = Path(f'{DISTPATH}/{APP}/tk.ozymandias.{APP}.svg')
 		if icon.exists():
 			icon.unlink()
-		icon.symlink_to(f'{DISTPATH}/{APP}/usr/share/icons/hicolor/tk.ozymandias.{APP}.svg')
+		icon.symlink_to(f'usr/share/icons/hicolor/tk.ozymandias.{APP}.svg')
 		dir_icon = Path(f'{DISTPATH}/{APP}/.DirIcon')
 		if dir_icon.exists():
 			dir_icon.unlink()
-		dir_icon.symlink_to(f'{DISTPATH}/{APP}/usr/share/icons/hicolor/tk.ozymandias.{APP}.svg')
+		dir_icon.symlink_to(f'usr/share/icons/hicolor/tk.ozymandias.{APP}.svg')
 		app_run = Path(f'{DISTPATH}/{APP}/AppRun')
 		if app_run.exists():
 			app_run.unlink()
-		app_run.symlink_to(f'{DISTPATH}/{APP}/{APP}')
+		app_run.symlink_to(f'{APP}')
 	except Exception as e:
 		print(f'ERROR CREATING SYMLINKS::{e.errno}')
 else:
