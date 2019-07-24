@@ -23,15 +23,14 @@ linux_data = [
 	(f'assets/tk.ozymandias.{APP}.appdata.xml', 'usr/share/metainfo'),
 ]
 windows_binaries = [
-	('lib/x64/ViGEmClient.dll', 'lib/x64/'),
-	('lib/x86/ViGEmClient.dll', 'lib/x86/'),
+	('j2dx/win/ViGEm/x64/ViGEmClient.dll', 'x64'),
+	('j2dx/win/ViGEm/x86/ViGEmClient.dll', 'x86'),
 ]
 
 
 if platform.system() == 'Linux':
 	a = Analysis(
-		['src/j2dx.py'],
-		# pathex=['/home/ozymandias/Projects/Joy2DroidX-server'],
+		['src/j2dx'],
 		pathex=[Path.cwd()],
 		binaries=[],
 		datas=linux_data,
@@ -92,8 +91,7 @@ if platform.system() == 'Linux':
 		print(f'ERROR CREATING SYMLINKS::{e.errno}')
 else:
 	a = Analysis(
-		['src/j2dx.py'],
-		# pathex=['/home/ozymandias/Projects/Joy2DroidX-server'],
+		['j2dx/__init__.py'],
 		pathex=[Path.cwd()],
 		binaries=windows_binaries,
 		datas=[],
@@ -123,7 +121,7 @@ else:
 		bootloader_ignore_signals=False,
 		strip=False,
 		upx=True,
-		upx_exclude=[],
+		upx_exclude=['vcruntime140.dll'],
 		runtime_tmpdir=None,
 		console=True,
 		icon='assets/j2dx.ico',

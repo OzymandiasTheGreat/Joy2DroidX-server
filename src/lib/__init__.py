@@ -1,8 +1,0 @@
-APP = 'j2dx'
-APPNAME = 'Joy2DroidX-server'
-NAMESPACE = f'tk.ozymandias.{APP}'
-AUTHOR = 'Tomas Ravinskas'
-AUTHOR_EMAIL = 'tomas.rav@gmail.com'
-VERSION = '0.1.0'
-VIGEM_REL = 'https://github.com/ViGEm/ViGEmBus/releases'
-VIGEM_URI = 'https://github.com/ViGEm/ViGEmBus/releases/download/v1.16.112/ViGEmBus_Setup_1.16.115.exe'

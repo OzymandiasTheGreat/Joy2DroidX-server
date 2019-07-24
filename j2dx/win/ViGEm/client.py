@@ -2,6 +2,7 @@ import sys
 from enum import IntFlag, IntEnum
 from ctypes import Structure, WinDLL
 from ctypes import c_ushort, c_short, c_byte, c_void_p, c_uint
+from pkg_resources import resource_filename
 
 
 if sys.maxsize > 2**32:
@@ -126,7 +127,14 @@ class VIGEM_ERRORS(IntEnum):
 	VIGEM_ERROR_XUSB_USERINDEX_OUT_OF_RANGE = 0xE0000014
 
 
-CLIENT = WinDLL(f'lib/{ARCH}/ViGEmClient.dll')
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+	# if ARCH == 'x64':
+	# 	CLIENT = WinDLL('x64/ViGEmClient.dll')
+	# else:
+	# 	CLIENT = WinDLL('x86/ViGEmClient.dll')
+	CLIENT = WinDLL(f'{ARCH}/ViGEmClient.dll')
+else:
+	CLIENT = WinDLL(resource_filename(f'{__package__}.{ARCH}', 'ViGEmClient.dll'))
 
 
 alloc = CLIENT.vigem_alloc

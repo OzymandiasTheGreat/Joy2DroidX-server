@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "j2dx"
+version = "0.1.0"
+description = "Use your Android phone as a virtual Xbox 360 controller or DualShock 4 gamepad on your Windows or Linux PC. This is the server that runs on Windows or Linux."
+authors = ["Tomas Ravinskas <tomas.rav@gmail.com>"]
+license = "GPL-3.0"
+readme = "README.md"
+homepage = "https://github.com/OzymandiasTheGreat/Joy2DroidX-server"
+repository = "https://github.com/OzymandiasTheGreat/Joy2DroidX-server"
+keywords = ["virtual-device", "gamepad", "controller"]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: Microsoft :: Windows :: Windows 10",
+    "Operating System :: POSIX :: Linux",
+    "Topic :: Games/Entertainment",
+    "Topic :: System :: Emulators",
+]
+include = [
+    "LICENSE",
+    "src/j2dx/win/ViGEm/x64/ViGEmClient.dll",
+    "src/j2dx/win/ViGEm/x86/ViGEmClient.dll",
+]
+
+[tool.poetry.scripts]
+j2dx = "j2dx:main"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+python-socketio = "^4.2"
+eventlet = "^0.25"
+qrcode = "^6.1"
+colorama = { version = "^0.4", platform = "win32" }
+evdev = { version = "^1.2", platform = "linux" }
+
+[tool.poetry.dev-dependencies]
+flake8 = "^3.7"
+PyInstaller = "^3.5"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
