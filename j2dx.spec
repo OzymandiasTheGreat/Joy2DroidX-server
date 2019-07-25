@@ -30,7 +30,7 @@ windows_binaries = [
 
 if platform.system() == 'Linux':
 	a = Analysis(
-		['src/j2dx'],
+		['j2dx/__init__.py'],
 		pathex=[Path.cwd()],
 		binaries=[],
 		datas=linux_data,

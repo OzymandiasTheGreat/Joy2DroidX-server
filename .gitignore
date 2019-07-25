@@ -1,7 +1,8 @@
 __pycache__
 .venv
-.vscode
 *.egg-info
 build
 dist
 scratchpad.py
+.vscode/*
+!.vscode/tasks.json

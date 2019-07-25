@@ -1,0 +1,141 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "PyInstaller Test Build",
+			"type": "shell",
+			"linux": {
+				"command": "./.venv/bin/pyinstaller"
+			},
+			"windows": {
+				"command": ".\\.venv\\Scripts\\pyinstaller"
+			},
+			"args": [
+				"--noconfirm",
+				"--clean",
+				"j2dx.spec"
+			],
+			"options": {
+				"env": {
+					"BUILD_MODE": "development"
+				}
+			},
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			}
+		},
+		{
+			"label": "PyInstaller Prod Build",
+			"type": "shell",
+			"linux": {
+				"command": "./.venv/bin/pyinstaller"
+			},
+			"windows": {
+				"command": ".\\.venv\\Scripts\\pyinstaller"
+			},
+			"args": [
+				"--noconfirm",
+				"--clean",
+				"j2dx.spec"
+			],
+			"options": {
+				"env": {
+					"BUILD_MODE": "production"
+				}
+			},
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			}
+		},
+		{
+			"label": "AppImage Build",
+			"type": "shell",
+			"linux": {
+				"command": "appimagetool",
+				"args": [
+					"dist/j2dx",
+					"dist/j2dx.appimage"
+				]
+			},
+			"windows": {
+				"command": "echo",
+				"args": [
+					"Unsupported platform. Skipping AppImage build."
+				]
+			},
+			"dependsOn": ["PyInstaller Prod Build"],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			}
+		},
+		{
+			"label": "Poetry Build",
+			"type": "shell",
+			"command": "poetry",
+			"args": [
+				"build"
+			],
+			"group": "build",
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "silent",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			}
+		},
+		{
+			"label": "Build",
+			"type": "shell",
+			"command": "echo",
+			"args": [
+				"Building all available distributions..."
+			],
+			"dependsOn": [
+				"AppImage Build",
+				"Poetry Build"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			}
+		}
+	]
+}
