@@ -2,6 +2,7 @@ import sys
 from enum import IntFlag, IntEnum
 from ctypes import Structure, WinDLL
 from ctypes import c_ushort, c_short, c_byte, c_void_p, c_uint
+from pathlib import PurePath
 from pkg_resources import resource_filename
 
 
@@ -128,11 +129,7 @@ class VIGEM_ERRORS(IntEnum):
 
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-	# if ARCH == 'x64':
-	# 	CLIENT = WinDLL('x64/ViGEmClient.dll')
-	# else:
-	# 	CLIENT = WinDLL('x86/ViGEmClient.dll')
-	CLIENT = WinDLL(f'{ARCH}/ViGEmClient.dll')
+	CLIENT = WinDLL(str(PurePath(sys._MEIPASS, ARCH, 'ViGEmClient.dll')))
 else:
 	CLIENT = WinDLL(resource_filename(f'{__package__}.{ARCH}', 'ViGEmClient.dll'))
 
