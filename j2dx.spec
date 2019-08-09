@@ -23,6 +23,19 @@ linux_data = [
 	(f'assets/tk.ozymandias.{APP}.appdata.xml', 'usr/share/metainfo'),
 ]
 windows_binaries = [
+	('C:/Windows/System32/msvcp140.dll', '.'),
+	('C:/Windows/System32/concrt140.dll', '.'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-runtime-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-heap-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-string-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-locale-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-stdio-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-filesystem-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-time-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-environment-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-math-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-convert-l1-1-0.dll', 'crt'),
+	('C:/Windows/System32/downlevel/api-ms-win-crt-utility-l1-1-0.dll', 'crt'),
 	('j2dx/win/ViGEm/x64/ViGEmClient.dll', 'x64'),
 	('j2dx/win/ViGEm/x86/ViGEmClient.dll', 'x86'),
 ]
