@@ -5,6 +5,12 @@
 Joy2DroidX allows you to use your Android device as a
 virtual Xbox 360 controller or DualShock 4 gamepad.
 
+-------------------
+
+If you find this software useful, [consider becoming a patron](https://www.patreon.com/ozymandias)
+
+-------------------
+
 It consists of a server that runs on Windows and Linux
 and an Android app. While there's nothing preventing the
 app from running on any Android device, it's been only
